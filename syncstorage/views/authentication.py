@@ -99,8 +99,29 @@ class SyncStorageAuthenticationPolicy(TokenServerAuthenticationPolicy):
         # Calculate the matching request-signing secret.
         key = tokenlib.get_derived_secret(tokenid, secret=secret)
 
-        request.metrics["fxa_uid"] = data.get("fxa_uid")
-        request.metrics["device_id"] = data.get("device_id")
+        # Extract additional user-related from the token,
+        # for storage and metrics purposes.
+        #
+        # There's some historical baggage here.
+        #
+        # Old versions of tokenserver would send a hashed "metrics uid" as the
+        # "fxa_uid" key, attempting a small amount of anonymization.  Newer
+        # versions of tokenserver send the raw uid as "fxa_uid" and the hashed
+        # version as "hashed_fxa_uid".  The raw version may be used associating
+        # stored data with a specific user, but the hashed version is the one
+        # that we want for metrics.
+
+        if "hashed_fxa_uid" in data:
+            request.metrics["fxa_uid"] = data["hashed_fxa_uid"]
+            request.user["fxa_uid"] = data.get("fxa_uid")
+            request.user["fxa_kid"] = data.get("fxa_kid")
+        else:
+            request.metrics["fxa_uid"] = data.get("fxa_uid")
+            # There's no raw uid/kid information in the token in this case.
+        if "hashed_device_id" in data:
+            request.metrics["device_id"] = data["hashed_device_id"]
+        else:
+            request.metrics["device_id"] = data.get("device_id")
 
         return userid, key
 
