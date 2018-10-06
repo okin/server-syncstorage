@@ -8,8 +8,12 @@ for an 'application' variable
 """
 import os
 from logging.config import fileConfig
-from ConfigParser import NoSectionError
 from paste.deploy import loadapp
+
+try:
+    from ConfigParser import NoSectionError
+except ImportError:
+    from configparser import NoSectionError
 
 # setting up the egg cache to a place where apache can write
 os.environ['PYTHON_EGG_CACHE'] = '/tmp/python-eggs'
