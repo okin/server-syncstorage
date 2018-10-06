@@ -45,6 +45,10 @@ from syncstorage.storage.sql import (queries_generic,
                                      queries_postgres,
                                      queries_mysql)
 
+try:
+    _STRING_CLASS = basestring
+except NameError:
+    _STRING_CLASS = str
 
 logger = logging.getLogger(__name__)
 
@@ -433,7 +437,7 @@ class DBConnector(object):
         # If it's a string, do some interpolation and return it.
         # XXX TODO: we could pre-parse these queries at load time to look for
         # string interpolation variables, saving some time on each call.
-        assert isinstance(query, basestring)
+        assert isinstance(query, _STRING_CLASS)
         qvars = {}
         if "%(bso)s" in query:
             if "bso" in params:
@@ -716,7 +720,7 @@ class DBConnection(object):
         job is to add annotations in a comment on the query.
         """
         # Convert SQLAlchemy expression objects into a string.
-        if isinstance(query, basestring):
+        if isinstance(query, _STRING_CLASS):
             query_str = query
         else:
             dialect = self._connector._render_query_dialect
