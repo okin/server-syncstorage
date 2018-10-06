@@ -5,7 +5,7 @@ PYTHON = local/bin/python
 PIP = local/bin/pip
 PIP_CACHE = /tmp/pip-cache.${USER}
 BUILD_TMP = /tmp/syncstorage-build.${USER}
-PYPI = https://pypi.python.org/simple
+PYPI = https://pypi.org/simple
 
 export MOZSVC_SQLURI = sqlite:///:memory:
 
