@@ -20,8 +20,8 @@ INSTALL = ARCHFLAGS=$(ARCHFLAGS) $(PIP) install -U -i $(PYPI)
 all:	build
 
 build:
-	$(VIRTUALENV) --no-site-packages --distribute ./local
-	$(INSTALL) --upgrade Distribute pip
+	$(VIRTUALENV) --no-site-packages ./local
+	$(INSTALL) --upgrade "setuptools>=0.7" pip
 	$(INSTALL) -r requirements.txt
 	$(PYTHON) ./setup.py develop
 
